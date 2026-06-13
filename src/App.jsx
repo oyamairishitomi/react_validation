@@ -20,7 +20,7 @@ function validate(values) {
 }
 
 function App() {
-  const [values, errors, handleChange] = useForm(
+  const [values, errors, handleChange, touched, handleBlur] = useForm(
     { name: "", email: "", password: "" },
     validate,
   );
@@ -30,13 +30,18 @@ function App() {
     <div>
       <div>
         名前：
-        <input name="name" value={values.name} onChange={handleChange} />
-        {errors.name && <p>{errors.name}</p>}
+        <input name="name" value={values.name} onChange={handleChange} onBlur={handleBlur}/>
+        {errors.name && touched.name && <p>{errors.name}</p>}
       </div>
       <div>
         メール：
-        <input name="email" value={values.email} onChange={handleChange} />
-        {errors.email && <p>{errors.email}</p>}
+        <input
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        {errors.email && touched.email && <p>{errors.email}</p>}
       </div>
       <div>
         パスワード：
@@ -45,11 +50,12 @@ function App() {
           type={showPassword ? "text" : "password"}
           value={values.password}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         <button type="button" onClick={toggle}>
           {showPassword ? "隠す" : "表示"}
         </button>
-        {errors.password && <p>{errors.password}</p>}
+        {errors.password && touched.password && <p>{errors.password}</p>}
       </div>
     </div>
   );

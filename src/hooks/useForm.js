@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export function useForm(initialValue, validate) {
   const [values, setValue] = useState(initialValue);
-  const errors = validate(values);
+  const [touched, setTouched] = useState({});
+  const errors = useMemo(() => validate(values), [values, validate]);
 
   const handleChange = (e) => {
     setValue({
@@ -11,5 +12,12 @@ export function useForm(initialValue, validate) {
       });
     };
 
-  return [values, errors, handleChange];
+  const handleBlur = (e) => {
+    setTouched({
+      ...touched,
+      [e.target.name]: true,
+    });
+  };
+
+  return [values, errors, handleChange, touched, handleBlur];
 }
