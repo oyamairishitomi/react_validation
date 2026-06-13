@@ -7,10 +7,10 @@ export function useForm(initialValue, validate) {
 
   const handleChange = (e) => {
     setValue({
-        ...values,
-        [e.target.name]: e.target.value,
-      });
-    };
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleBlur = (e) => {
     setTouched({
