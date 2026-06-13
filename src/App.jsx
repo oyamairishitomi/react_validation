@@ -1,122 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useForm } from "./hooks/useForm";
+import { useToggle } from "./hooks/useToggle";
 
-function App() {
-  const [count, setCount] = useState(0)
+function validate(values) {
+  const errors = {};
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+  if (!values.name) {
+    errors.name = "名前は必須です";
+  }
 
-      <div className="ticks"></div>
+  if (!values.email.includes("@")) {
+    errors.email = "メールアドレスの形式が正しくありません";
+  }
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+  if (values.password.length < 6) {
+    errors.password = "パスワードは６文字以上です";
+  }
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+  return errors;
 }
 
-export default App
+function App() {
+  const [values, errors, handleChange, touched, handleBlur] = useForm(
+    { name: "", email: "", password: "" },
+    validate,
+  );
+  const [showPassword, toggle] = useToggle(false);
+
+  return (
+    <div>
+      <div>
+        名前：
+        <input name="name" value={values.name} onChange={handleChange} onBlur={handleBlur}/>
+        {errors.name && touched.name && <p>{errors.name}</p>}
+      </div>
+      <div>
+        メール：
+        <input
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        {errors.email && touched.email && <p>{errors.email}</p>}
+      </div>
+      <div>
+        パスワード：
+        <input
+          name="password"
+          type={showPassword ? "text" : "password"}
+          value={values.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        <button type="button" onClick={toggle}>
+          {showPassword ? "隠す" : "表示"}
+        </button>
+        {errors.password && touched.password && <p>{errors.password}</p>}
+      </div>
+    </div>
+  );
+}
+
+export default App;
